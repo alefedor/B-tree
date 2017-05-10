@@ -28,7 +28,7 @@ class Btree{
     class Node{
      public:
         Node(std::fstream &f, unsigned long long offset, Cacher &cache);
-        Node(){};
+        Node();
 
         void writeNode(std::fstream &f, Logger &logger, Cacher &cache);
         void delNode(std::fstream &f, Logger &logger, Cacher &cache, unsigned long long &nxt_space);
@@ -516,6 +516,8 @@ Btree<Key, Value, min_deg>::Node::Node(std::fstream &f, unsigned long long ps, C
         refs.clear();
 }
 
-//template <typename Key, typename Value, unsigned int min_deg>
-//Btree<Key, Value, min_deg>::Node::Node(){}
+template <typename Key, typename Value, unsigned int min_deg>
+Btree<Key, Value, min_deg>::Node::Node(){
+    memset(old, 0, size);
+}
 #endif
