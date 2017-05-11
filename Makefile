@@ -13,10 +13,10 @@ main: ./bin/main.o ./bin/cacher.o ./bin/logger.o | btree.main btree.vals btree.l
 
 clean: 
 	rm -rf ./bin
-	rm -rf main
-	rm -rf btree.main
-	rm -rf btree.log
-	rm -rf btree.vals
+	rm -f main
+	rm -f btree.main
+	rm -f btree.log
+	rm -f btree.vals
 	
 	
 bin:

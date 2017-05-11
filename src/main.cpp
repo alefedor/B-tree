@@ -1,4 +1,5 @@
 #include <cstddef>
+#include <cstdlib>
 #include <iostream>
 
 #include <cassert>
@@ -11,22 +12,25 @@ using namespace std;
 void clear_tree(){
     fstream file("btree.main", std::fstream::out | ios_base::trunc);
     fstream l("btree.log", std::fstream::out | ios_base::trunc);
+    fstream file_vals("btree.vals", std::fstream::out | ios_base::trunc);
+    file_vals.close();
     l.close();
     file.close();
 }
 
 void test_add(){
-    Btree<int, long long, 35> b;
+    clear_tree();
+    Btree<pair<int, int>, pair<long long, long long>, 25> b;
     for (size_t i = 0; i < 1000; i++)
-        b.addElem(rand(), 5); // testing that this doesn't break down
+        b.addElem(make_pair(rand(), rand()), make_pair(5, 4)); // testing that this doesn't break down
 }
 
 void test_find(){
     clear_tree();
-    Btree<int, long long, 35> b;
-    map<int, long long> mp;
+    Btree<int, int, 35> b;
+    map<int, int> mp;
     int a;
-    long long val;
+    int val;
     for (size_t i = 0; i < 500; i++){
         a = rand() % 750;
         mp[a] = val = i;
@@ -34,9 +38,9 @@ void test_find(){
     }
 
     bool bad = false, res;
-    long long vv;
-    long long *v = &vv;
-    for (size_t i = 0; i < 500; i++){
+    int vv;
+    int *v = &vv;
+    for (size_t i = 0; i < 750; i++){
         res = b.findElem(i, v);
         if (res != mp.count(i) || (res && mp[i] != *v))
             bad = true;
@@ -86,6 +90,7 @@ void test_get(){
 }
 
 void test_del(){
+    clear_tree();
     Btree<int, long long, 35> b;
     int arr[100];
     for (size_t i = 0; i < 100; i++)

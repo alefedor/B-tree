@@ -6,10 +6,10 @@
 class Logger{
  public:
     Logger();
-    void log(unsigned long long, char*, size_t);
+    void log(unsigned long long, char*, size_t, bool is_value);
     void finish();
     void init();
-    void recoverTree(std::fstream &f);
+    void recoverTree(std::fstream &f, std::fstream &f_vals);
 
  private:
     size_t num, pos;
