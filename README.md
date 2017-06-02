@@ -1,4 +1,4 @@
-﻿# B-tree
+# B-tree
 ## Описание проекта
 
 Требовалось написать структуру данных, которая хранила пары <Ключ, Значение> и поддерживала бы операции add, del, get и выборку.
@@ -36,4 +36,9 @@ void delElem(const Key &key);
 bool findElem(const Key &key, Value *pval); // return whether the element was found and if is found writes it in pval
 
 Makefile собирает файл main, который можно запустить, чтобы запустить тесты.
-Тесты написаны в файле main.cpp
+Пример вывода запуска ./main:  
+>Running all tests  
+>  
+>===============  
+>Test Results:  
+>Ok (Run: 7, Failures: 0)  

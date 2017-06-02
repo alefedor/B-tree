@@ -1,13 +1,21 @@
 #include <cstddef>
 #include <cstdlib>
 #include <iostream>
-
 #include <cassert>
 #include <map>
 
+using namespace std;
+
+int num = 0, failed = 0;
+
+#define FAIL {print(__FUNCTION__, __LINE__); failed++; num++; return; }
+#define SUCCESS num++;
+
 #include "b-tree.h"
 
-using namespace std;
+void print(const char *func, size_t lineNum){
+    cout << "Test failed " << func << " in line " << lineNum << endl;
+}
 
 void clear_tree(){
     fstream file("btree.main", std::fstream::out | ios_base::trunc);
@@ -18,11 +26,73 @@ void clear_tree(){
     file.close();
 }
 
+void test_one_elem(){
+    clear_tree();
+    Btree<int, int, 35> b;
+    int a = rand(), c = rand();
+    b.addElem(a, c);
+
+    int vv;
+    bool res;
+    int *v = &vv;
+    res = b.findElem(a, v);
+    if (!res || *v != c)
+        FAIL;
+    b.delElem(a);
+    res = b.findElem(a, v);
+    if (res)
+        FAIL;
+    SUCCESS;
+}
+
+class Comp{
+ public:
+    int a;
+    double b;
+    Comp():a(0), b(0){}
+    Comp(int a, double b):a(a), b(b){}
+    bool operator ==(const Comp &x){
+        return (x.a == a && x.b == b);
+    }
+    bool operator !=(const Comp &x){
+        return !(*this == x);
+    }
+};
+
+bool operator < (const Comp &x, const Comp &y){
+    return (x.a * x.b < y.a * y.b);
+}
+
+void test_complex_class(){
+    clear_tree();
+    Btree<Comp, Comp, 35> b;
+    Comp arr[100];
+    for (size_t i = 0; i < 100; i++)
+        arr[i] = Comp(i, i / 3.1415);
+    random_shuffle(arr, arr + 100);
+    for (size_t i = 0; i < 100; i++)
+        b.addElem(arr[i], arr[(i + 1) % 100]);
+    random_shuffle(arr, arr + 100);
+    for (size_t i = 0; i < 100; i++)
+        b.delElem(arr[i]);
+    Comp vv;
+    Comp *v = &vv;
+    bool bad = false;
+    for (size_t i = 0; i < 100; i++)
+        if (b.findElem(arr[i], v))
+            bad = true;
+
+    if (bad)
+        FAIL;
+    SUCCESS;
+}
+
 void test_add(){
     clear_tree();
     Btree<pair<int, int>, pair<long long, long long>, 25> b;
     for (size_t i = 0; i < 1000; i++)
         b.addElem(make_pair(rand(), rand()), make_pair(5, 4)); // testing that this doesn't break down
+    SUCCESS;
 }
 
 void test_find(){
@@ -47,11 +117,8 @@ void test_find(){
 
     }
     if (bad)
-        cerr << "Find test failed" << endl;
-    while (!mp.empty()){
-        b.delElem(mp.begin() -> first);
-        mp.erase(mp.begin());
-    }
+        FAIL;
+    SUCCESS;
 }
 
 void test_get(){
@@ -85,8 +152,8 @@ void test_get(){
                 bad = true;
     }
     if (bad)
-        cerr << "Get in range test failed" << endl;
-
+        FAIL;
+    SUCCESS;
 }
 
 void test_del(){
@@ -108,7 +175,8 @@ void test_del(){
         if (b.findElem(i, v))
             bad = true;
     if (bad)
-        cerr << "Del test failed" << endl;
+        FAIL;
+    SUCCESS;
 }
 
 void test_reuse(){
@@ -129,17 +197,23 @@ void test_reuse(){
         if ((i < 50 && b.findElem(i, v)) || (i >= 50 && !b.findElem(i, v)))
             bad = true;
     if (bad)
-        cerr << "Reuse test failed" << endl;
+        FAIL;
+    SUCCESS;
 }
 
 void test_all(){
+    test_one_elem();
     test_find();
     test_get();
     test_add();
     test_del();
     test_reuse();
+    test_complex_class();
 }
 
 int main(){
+    cout << "Running all tests" << endl;
     test_all();
+    cout << endl << "==============="<<endl << "Test Results:";
+    cout << endl << (failed != 0 ? "Error" : "Ok") << " (Run: " << num << ", Failures: " << failed << ")" << endl;
 }
