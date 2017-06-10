@@ -47,10 +47,10 @@ void test_one_elem(){
 
 class Comp{
  public:
-    int a;
     double b;
-    Comp():a(0), b(0){}
-    Comp(int a, double b):a(a), b(b){}
+    long long a;
+    Comp():b(0), a(0){}
+    Comp(long long a, double b):b(b), a(a){}
     bool operator ==(const Comp &x){
         return (x.a == a && x.b == b);
     }
@@ -69,15 +69,20 @@ void test_complex_class(){
     Comp arr[100];
     for (size_t i = 0; i < 100; i++)
         arr[i] = Comp(i, i / 3.1415);
+
     random_shuffle(arr, arr + 100);
     for (size_t i = 0; i < 100; i++)
         b.addElem(arr[i], arr[(i + 1) % 100]);
-    random_shuffle(arr, arr + 100);
-    for (size_t i = 0; i < 100; i++)
-        b.delElem(arr[i]);
     Comp vv;
     Comp *v = &vv;
     bool bad = false;
+    for (size_t i = 0; i < 100; i++)
+        if (!b.findElem(arr[i], v))
+            bad = true;
+
+    random_shuffle(arr, arr + 100);
+    for (size_t i = 0; i < 100; i++)
+        b.delElem(arr[i]);
     for (size_t i = 0; i < 100; i++)
         if (b.findElem(arr[i], v))
             bad = true;
